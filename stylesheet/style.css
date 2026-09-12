@@ -1,0 +1,16 @@
+:root {
+    --page: #0b0d0e;
+    --text: #f0f0ee;
+    --muted: #92979d;
+    --line: #25292d;
+}
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
