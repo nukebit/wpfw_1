@@ -27,6 +27,77 @@
             <h1>Projects</h1>
             <p class="lead">Deze pagina wordt tijdens het project verder uitgewerkt.</p>
         </header>
+
+        <section class="projects wrap">
+                <article class="project" id="task-platform">
+                    <span aria-hidden="true">01</span>
+                    <header>
+                        <p class="meta">Laravel · React · MySQL</p>
+                        <h2>Task management platform</h2>
+                    </header>
+                    <p>Een application voor het maken van projecten, verdelen van taken en volgen van de voortgang.</p>
+                    <section class="breakdown">
+                        <section>
+                        <h3>Uitdaging</h3>
+                        <p>De permissions, task status en team data moeten voor iedere user kloppen.</p>
+                        </section>
+                        <section>
+                        <h3>Aanpak</h3>
+                        <p>Laravel verwerkt authentication, validation en database access. React toont het dashboard en verwerkt de API responses.</p>
+                        </section>
+                        <section>
+                        <h3>Leerpunt</h3>
+                        <p>Een vast API contract maakt de frontend state beter beheersbaar.</p>
+                        </section>
+                    </section>
+                </article>
+
+                <article class="project" id="event-booking">
+                <span aria-hidden="true">02</span>
+                <header>
+                    <p class="meta">Laravel · React · REST API</p>
+                    <h2>Event booking application</h2>
+                </header>
+                <p>Een application waarin users evenementen bekijken, plaatsen reserveren en bookings beheren.</p>
+                <section class="breakdown">
+                    <section>
+                    <h3>Uitdaging</h3>
+                    <p>Voorkomen dat meerdere users tegelijk de laatste beschikbare plaatsen boeken.</p>
+                    </section>
+                    <section>
+                    <h3>Aanpak</h3>
+                    <p>Laravel gebruikt database transactions. React verzorgt filters, booking forms en feedback.</p>
+                    </section>
+                    <section>
+                    <h3>Leerpunt</h3>
+                    <p>Belangrijke business rules moeten altijd door de backend worden gecontroleerd.</p>
+                    </section>
+                </section>
+                </article>
+
+                <article class="project" id="inventory-dashboard">
+                <span aria-hidden="true">03</span>
+                <header>
+                    <p class="meta">Laravel · React · MySQL</p>
+                    <h2>Inventory dashboard</h2>
+                </header>
+                <p>Een dashboard voor product management, stock updates en low-stock notifications.</p>
+                <section class="breakdown">
+                    <section>
+                    <h3>Uitdaging</h3>
+                    <p>Een grote product catalogue overzichtelijk tonen en de stock correct bijhouden.</p>
+                    </section>
+                    <section>
+                    <h3>Aanpak</h3>
+                    <p>Laravel levert paginated endpoints. React regelt search, filters en reusable components.</p>
+                    </section>
+                    <section>
+                    <h3>Leerpunt</h3>
+                    <p>Door business logic en presentation te scheiden zijn beide kanten beter te testen.</p>
+                    </section>
+                </section>
+                </article>
+        </section>
     </main>
 
     <footer class="footer">

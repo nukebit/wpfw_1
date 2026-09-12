@@ -169,3 +169,81 @@ a {
 .text-link {
     color: var(--subtle);
 }
+
+main > section {
+    padding-block: 3.75rem;
+}
+
+.section-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.section-head a, .card a {
+    color: var(--subtle);
+    font-size: 0.75rem;
+    text-decoration: none;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.card {
+    padding: 1.4rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+}
+
+.card-text {
+    min-height: 3.2rem;
+    color: var(--muted);
+    font-size: 0.84rem;
+}
+
+.page-head {
+    padding-block: 4rem 1rem;
+}
+
+.projects, .project, .breakdown {
+    display: grid;
+    gap: 1rem;
+}
+
+.project {
+    grid-template-columns: 2rem 1fr;
+    padding: 1.4rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+}
+
+.project > span {
+    grid-row: 1 / span 3;
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.project > header, .project > p, .project > .breakdown {
+    grid-column: 2;
+}
+
+.project > p, .breakdown p {
+    color: var(--muted);
+}
+
+.breakdown {
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 1.2rem;
+}
+
+.breakdown section {
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--line);
+}
