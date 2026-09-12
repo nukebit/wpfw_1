@@ -7,9 +7,32 @@
     <link rel="stylesheet" href="../stylesheet/style.css">
 </head>
 <body>
+    <a class="skip" href="#main-content">Ga naar de inhoud</a>
+
+
     <header class="header">
         <section class="header-content wrap">
             <a class="logo" href="../index.html">BA</a>
+
+        <details class="menu">
+            <summary>
+                <span class="sr-only">Open menu</span>
+                <span class="burger" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+                </span>
+            </summary>
+
+            <nav class="mobile-nav">
+                <ul class="nav-links">
+                <li><a class="nav-link" href="../index.html">About me</a></li>
+                <li><a class="nav-link" href="projects.html">Projects</a></li>
+                <li><a class="nav-link active" aria-current="page" href="blog.html">Blog</a></li>
+                </ul>
+            </nav>
+        </details>
+
 
             <nav class="desktop-nav">
             <ul class="nav-links">
@@ -22,12 +45,83 @@
     </header>
 
 
-    <main>
+    <main id="main-content">
         <header class="page-head wrap">
             <p class="kicker">Full-stack notities</p>
             <h1>Blog</h1>
             <p class="lead">Deze pagina wordt tijdens het project verder uitgewerkt.</p>
         </header>
+
+        
+        <section class="posts wrap">
+            <article class="post">
+            <header>
+                <time datetime="2026-09-07">7 september 2026</time>
+                <span>Laravel</span>
+            </header>
+            <section class="post-content">
+                <p class="meta">Laravel · Validation</p>
+                <h2>Validate iedere API request</h2>
+                <p>Form requests houden validation rules buiten de controllers. Ongeldige data komt hierdoor niet in de application logic terecht.</p>
+                <p class="lesson"><strong>Leerpunt:</strong> frontend validation helpt de user, maar de backend blijft verantwoordelijk voor data integrity.</p>
+            </section>
+            </article>
+
+            <article class="post">
+            <header>
+                <time datetime="2026-09-08">8 september 2026</time>
+                <span>React</span>
+            </header>
+            <section class="post-content">
+                <p class="meta">React · State</p>
+                <h2>Bewaar state bij de juiste component</h2>
+                <p>Local state is geschikt voor tijdelijke data. Gedeelde server data gaat via een duidelijke API layer.</p>
+                <p class="lesson"><strong>Leerpunt:</strong> niet iedere value heeft global state nodig.</p>
+            </section>
+            </article>
+
+            <article class="post">
+            <header>
+                <time datetime="2026-09-09">9 september 2026</time>
+                <span>REST API</span>
+            </header>
+            <section class="post-content">
+                <p class="meta">Laravel · REST API</p>
+                <h2>Maak API responses voorspelbaar</h2>
+                <p>Een vaste JSON structure maakt succesvolle requests en errors eenvoudiger af te handelen in React.</p>
+                <p class="lesson"><strong>Leerpunt:</strong> een vast API contract zorgt voor minder conditional code in de frontend.</p>
+            </section>
+            </article>
+
+        <article class="post">
+            <header>
+                <span>Application flow</span>
+                <span>Vier stappen</span>
+            </header>
+            <section class="post-content">
+                <p class="meta">HTTP · Laravel · React</p>
+                <h2>Request-response cycle</h2>
+                <ol>
+                <li>Een user action in React start een HTTP request.</li>
+                <li>Laravel stuurt de request naar de juiste controller.</li>
+                <li>De backend valideert de data en gebruikt de database.</li>
+                <li>Laravel stuurt JSON terug en React update de interface.</li>
+                </ol>
+                <p class="lesson"><strong>Leerpunt:</strong> vaste request- en response formats maken de samenwerking tussen frontend en backend duidelijker.</p>
+            </section>
+            </article>
+        </section>
+
+        <section class="dark">
+                <section class="cta wrap">
+                <header>
+                <p class="kicker">Full-stack development</p>
+                <h2>Bekijk mijn applications</h2>
+                <p>Bekijk hoe ik Laravel-backends met React-frontends combineer.</p>
+                </header>
+                <a class="btn" href="projects.html">Bekijk projects →</a>
+            </section>
+        </section>
     </main>
 
     <footer class="footer">

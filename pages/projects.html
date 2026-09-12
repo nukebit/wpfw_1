@@ -7,9 +7,30 @@
     <link rel="stylesheet" href="../stylesheet/style.css">
 </head>
 <body>
+    <a class="skip" href="#main-content">Ga naar de inhoud</a>
+
         <header class="header">
             <section class="header-content wrap">
                 <a class="logo" href="../index.html">BA</a>
+
+        <details class="menu">
+            <summary>
+                <span class="sr-only">Open menu</span>
+                <span class="burger" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+                </span>
+            </summary>
+
+            <nav class="mobile-nav">
+                <ul class="nav-links">
+                <li><a class="nav-link" href="../index.html">About me</a></li>
+                <li><a class="nav-link active" aria-current="page" href="projects.html">Projects</a></li>
+                <li><a class="nav-link" href="blog.html">Blog</a></li>
+                </ul>
+            </nav>
+        </details>
 
                 <nav class="desktop-nav">
                 <ul class="nav-links">
@@ -21,7 +42,7 @@
             </section>
     </header>
 
-    <main>
+    <main id="main-content">
         <header class="page-head wrap">
             <p class="kicker">Full-stack applications</p>
             <h1>Projects</h1>
