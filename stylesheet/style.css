@@ -207,6 +207,36 @@ main > section {
     font-size: 0.84rem;
 }
 
+.card-image, .project-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+}
+
+.card-image {
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    margin-bottom: 1.2rem;
+    background: var(--panel-soft);
+}
+
+.project-visual {
+    min-width: 0;
+    margin: 0;
+}
+
+.project-visual a {
+    display: block;
+    border-radius: var(--radius);
+}
+
+.project-visual figcaption {
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
 .page-head {
     padding-block: 4rem 1rem;
 }
@@ -225,12 +255,12 @@ main > section {
 }
 
 .project > span {
-    grid-row: 1 / span 3;
+    grid-row: 1 / span 4;
     color: var(--muted);
     font-size: 0.75rem;
 }
 
-.project > header, .project > p, .project > .breakdown {
+.project > header, .project > .project-visual, .project > p, .project > .breakdown {
     grid-column: 2;
 }
 
@@ -298,8 +328,12 @@ main > section {
         grid-template-columns: 1fr;
     }
 
-.project > span, .project > header, .project > p, .project > .breakdown, .post-content {
+.project > span, .project > header, .project > .project-visual, .project > p, .project > .breakdown, .post-content {
         grid-column: 1;
+    }
+
+    .project > span {
+        grid-row: auto;
     }
 
 .footer-content, .cta {
