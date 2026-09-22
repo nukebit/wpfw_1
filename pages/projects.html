@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brian Arjun | Portfolio</title>
     <link rel="stylesheet" href="../stylesheet/style.css">
+    <script src="../js/script.js" defer></script>
 </head>
 <body>
     <a class="skip" href="#main-content">Ga naar de inhoud</a>
@@ -28,6 +29,7 @@
                 <li><a class="nav-link" href="../index.html">About me</a></li>
                 <li><a class="nav-link active" aria-current="page" href="projects.html">Projects</a></li>
                 <li><a class="nav-link" href="blog.html">Blog</a></li>
+                <li><a class="nav-link" href="../index.html#contact">Contact</a></li>
                 </ul>
             </nav>
         </details>
@@ -37,105 +39,39 @@
                     <li><a class="nav-link" href="../index.html">About me</a></li>
                     <li><a class="nav-link active" aria-current="page" href="projects.html">Projects</a></li>
                     <li><a class="nav-link" href="blog.html">Blog</a></li>
+                    <li><a class="nav-link" href="../index.html#contact">Contact</a></li>
                 </ul>
-                </nav>
-            </section>
+            </nav>
+        </section>
     </header>
 
     <main id="main-content">
         <header class="page-head wrap">
             <p class="kicker">Full-stack applications</p>
             <h1>Projects</h1>
-            <p class="lead">Deze pagina wordt tijdens het project verder uitgewerkt.</p>
+            <p class="lead">Concepten en leerpunten uit mijn projecten. Kies een type of filter de lijst.</p>
         </header>
 
-        <section class="projects wrap">
-                <article class="project" id="task-platform">
-                    <span aria-hidden="true">01</span>
-                    <header>
-                        <p class="meta">Laravel · React · MySQL</p>
-                        <h2>Task management platform</h2>
-                    </header>
-                    <figure class="project-visual">
-                        <a href="../images/projects/task-management.png" aria-label="Bekijk de conceptpreview van het task management platform op volledige grootte">
-                            <img class="project-image" src="../images/projects/task-management.png" alt="Conceptpreview van een takenbord met kolommen voor de voortgang van taken." width="1672" height="941" loading="lazy" decoding="async">
-                        </a>
-                        <figcaption>Conceptpreview</figcaption>
-                    </figure>
-                    <p>Een application voor het maken van projecten, verdelen van taken en volgen van de voortgang.</p>
-                    <section class="breakdown">
-                        <section>
-                        <h3>Uitdaging</h3>
-                        <p>De permissions, task status en team data moeten voor iedere user kloppen.</p>
-                        </section>
-                        <section>
-                        <h3>Aanpak</h3>
-                        <p>Laravel verwerkt authentication, validation en database access. React toont het dashboard en verwerkt de API responses.</p>
-                        </section>
-                        <section>
-                        <h3>Leerpunt</h3>
-                        <p>Een vast API contract maakt de frontend state beter beheersbaar.</p>
-                        </section>
-                    </section>
-                </article>
-
-                <article class="project" id="event-booking">
-                <span aria-hidden="true">02</span>
-                <header>
-                    <p class="meta">Laravel · React · REST API</p>
-                    <h2>Event booking application</h2>
-                </header>
-                <figure class="project-visual">
-                    <a href="../images/projects/event-booking.png" aria-label="Bekijk de conceptpreview van de event booking application op volledige grootte">
-                        <img class="project-image" src="../images/projects/event-booking.png" alt="Conceptpreview van een evenementenwebsite met zoekfilters en ticketreserveringen." width="1672" height="941" loading="lazy" decoding="async">
-                    </a>
-                    <figcaption>Conceptpreview</figcaption>
-                </figure>
-                <p>Een application waarin users evenementen bekijken, plaatsen reserveren en bookings beheren.</p>
-                <section class="breakdown">
-                    <section>
-                    <h3>Uitdaging</h3>
-                    <p>Voorkomen dat meerdere users tegelijk de laatste beschikbare plaatsen boeken.</p>
-                    </section>
-                    <section>
-                    <h3>Aanpak</h3>
-                    <p>Laravel gebruikt database transactions. React verzorgt filters, booking forms en feedback.</p>
-                    </section>
-                    <section>
-                    <h3>Leerpunt</h3>
-                    <p>Belangrijke business rules moeten altijd door de backend worden gecontroleerd.</p>
-                    </section>
-                </section>
-                </article>
-
-                <article class="project" id="inventory-dashboard">
-                <span aria-hidden="true">03</span>
-                <header>
-                    <p class="meta">Laravel · React · MySQL</p>
-                    <h2>Inventory dashboard</h2>
-                </header>
-                <figure class="project-visual">
-                    <a href="../images/projects/inventory-dashboard.png" aria-label="Bekijk de conceptpreview van het inventory dashboard op volledige grootte">
-                        <img class="project-image" src="../images/projects/inventory-dashboard.png" alt="Conceptpreview van een voorraaddashboard met producttabel, voorraadstatussen en statistieken." width="1672" height="941" loading="lazy" decoding="async">
-                    </a>
-                    <figcaption>Conceptpreview</figcaption>
-                </figure>
-                <p>Een dashboard voor product management, stock updates en low-stock notifications.</p>
-                <section class="breakdown">
-                    <section>
-                    <h3>Uitdaging</h3>
-                    <p>Een grote product catalogue overzichtelijk tonen en de stock correct bijhouden.</p>
-                    </section>
-                    <section>
-                    <h3>Aanpak</h3>
-                    <p>Laravel levert paginated endpoints. React regelt search, filters en reusable components.</p>
-                    </section>
-                    <section>
-                    <h3>Leerpunt</h3>
-                    <p>Door business logic en presentation te scheiden zijn beide kanten beter te testen.</p>
-                    </section>
-                </section>
-                </article>
+        <section class="wrap" aria-label="Projectenoverzicht">
+            <div class="project-controls">
+                <div class="control-field">
+                    <label for="project-filter">Type project</label>
+                    <select id="project-filter">
+                        <option value="alle">Alle projecten</option>
+                        <option value="applicatie">Applicaties</option>
+                        <option value="dashboard">Dashboards</option>
+                    </select>
+                </div>
+                <div class="control-field">
+                    <label for="project-sort">Volgorde</label>
+                    <select id="project-sort">
+                        <option value="standaard">Standaard</option>
+                        <option value="naam">Naam A-Z</option>
+                    </select>
+                </div>
+            </div>
+            <p id="project-count" class="result-count" role="status" aria-live="polite"></p>
+            <div class="projects" id="project-list"></div>
         </section>
     </main>
 

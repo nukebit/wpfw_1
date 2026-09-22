@@ -241,7 +241,7 @@ main > section {
     padding-block: 4rem 1rem;
 }
 
-.projects, .project, .breakdown {
+.projects, .project {
     display: grid;
     gap: 1rem;
 }
@@ -255,27 +255,116 @@ main > section {
 }
 
 .project > span {
-    grid-row: 1 / span 4;
+    grid-row: 1 / span 3;
     color: var(--muted);
     font-size: 0.75rem;
 }
 
-.project > header, .project > .project-visual, .project > p, .project > .breakdown {
+.project > header, .project > .project-visual, .project > p {
     grid-column: 2;
 }
 
-.project > p, .breakdown p {
+.project > p {
     color: var(--muted);
 }
 
-.breakdown {
-    grid-template-columns: repeat(3, 1fr);
-    margin-top: 1.2rem;
+
+.project-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
-.breakdown section {
-    padding-top: 0.8rem;
-    border-top: 1px solid var(--line);
+.control-field, .form-field {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.control-field label, .form-field label {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+select, input, textarea {
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid #666d73;
+    border-radius: var(--radius);
+    background: var(--panel-soft);
+    color: var(--text);
+    font: inherit;
+}
+
+.control-field select {
+    min-width: 12rem;
+}
+
+textarea {
+    resize: vertical;
+}
+
+[aria-invalid="true"] {
+    border-color: #ff9b9b;
+}
+
+.field-error {
+    min-height: 1.2rem;
+    margin: 0;
+    color: #ffb7b7;
+    font-size: 0.8rem;
+}
+
+.result-count, .source-note {
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.info-panel {
+    padding: 1.4rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+}
+
+.info-panel p:last-child {
+    margin-bottom: 0;
+}
+
+.weather-value {
+    margin-bottom: 0.25rem;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.source-note {
+    margin-top: 1rem;
+}
+
+.secondary-btn {
+    padding: 0.55rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel-soft);
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+}
+
+.contact-form {
+    display: grid;
+    gap: 0.8rem;
+    max-width: 37rem;
+}
+
+.contact-form .btn {
+    justify-self: start;
+    font: inherit;
+    cursor: pointer;
+}
+
+#form-status {
+    margin: 0;
 }
 
 .posts, .post, .post-content {
@@ -324,11 +413,11 @@ main > section {
 }
 
 @media (max-width: 47.99rem) {
-    .cards, .project, .breakdown, .post {
+    .cards, .project, .post {
         grid-template-columns: 1fr;
     }
 
-.project > span, .project > header, .project > .project-visual, .project > p, .project > .breakdown, .post-content {
+.project > span, .project > header, .project > .project-visual, .project > p, .post-content {
         grid-column: 1;
     }
 

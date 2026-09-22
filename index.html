@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brian Arjun | Portfolio</title>
     <link rel="stylesheet" href="stylesheet/style.css">
+    <script src="js/script.js" defer></script>
 </head>
 <body>
     <a class="skip" href="#main-content">Ga naar de inhoud</a>
@@ -28,6 +29,7 @@
                 <li><a class="nav-link active" aria-current="page" href="index.html">About me</a></li>
                 <li><a class="nav-link" href="pages/projects.html">Projects</a></li>
                 <li><a class="nav-link" href="pages/blog.html">Blog</a></li>
+                <li><a class="nav-link" href="#contact">Contact</a></li>
                 </ul>
             </nav>
         </details>
@@ -37,6 +39,7 @@
                 <li><a class="nav-link active" aria-current="page" href="index.html">About me</a></li>
                 <li><a class="nav-link" href="pages/projects.html">Projects</a></li>
                 <li><a class="nav-link" href="pages/blog.html">Blog</a></li>
+                <li><a class="nav-link" href="#contact">Contact</a></li>
             </ul>
             </nav>
         </section>
@@ -51,6 +54,7 @@
         <p class="actions">
             <a class="btn" href="pages/projects.html">Bekijk projects →</a>
             <a class="text-link" href="pages/blog.html">Lees mijn blog</a>
+            <a class="text-link" href="#contact">Contact</a>
         </p>
         </header>
 
@@ -66,7 +70,7 @@
                     <p class="meta">Laravel · React · MySQL</p>
                     <h3>Task management platform</h3>
                     <p class="card-text">Een full-stack application voor het beheren van projecten, taken en de voortgang van een team.</p>
-                    <a href="pages/projects.html#task-platform">Bekijk project →</a>
+                    <a href="pages/projects.html#task-management-platform">Bekijk project →</a>
             </article>
 
             <article class="card">
@@ -74,9 +78,53 @@
                     <p class="meta">Laravel · React · REST API</p>
                     <h3>Event booking application</h3>
                     <p class="card-text">Een booking platform voor evenementen, beschikbare plaatsen en user accounts.</p>
-                    <a href="pages/projects.html#event-booking">Bekijk project →</a>
+                    <a href="pages/projects.html#event-booking-application">Bekijk project →</a>
                 </article>
             </section>
+        </section>
+
+        <section class="wrap weather-section" aria-labelledby="weather-title">
+            <header class="section-head">
+                <div>
+                    <p class="kicker">Live info</p>
+                    <h2 id="weather-title">Weather in The Hague</h2>
+                </div>
+            </header>
+            <div class="info-panel">
+                <p id="weather-status" role="status" aria-live="polite">Het weer wordt geladen…</p>
+                <div id="weather-result"></div>
+                <button class="secondary-btn" id="weather-retry" type="button" hidden>Try again</button>
+                <p class="source-note">Provided by: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></p>
+            </div>
+        </section>
+
+        <section class="wrap" id="contact" aria-labelledby="contact-title">
+            <header class="section-head">
+                <div>
+                    <p class="kicker">Contact</p>
+                    <h2 id="contact-title">Stuur een bericht</h2>
+                </div>
+            </header>
+            <p class="lead">Dit is een demo van form control. Er worden nog geen messages verstuurd. Via een backend bv.</p>
+            <form class="contact-form info-panel" id="contact-form" novalidate>
+                <div class="form-field">
+                    <label for="contact-name">Naam</label>
+                    <input id="contact-name" name="name" type="text" autocomplete="name" required aria-describedby="name-error">
+                    <p class="field-error" id="name-error" aria-live="polite"></p>
+                </div>
+                <div class="form-field">
+                    <label for="contact-email">Emailadres</label>
+                    <input id="contact-email" name="email" type="email" autocomplete="email" required aria-describedby="email-error">
+                    <p class="field-error" id="email-error" aria-live="polite"></p>
+                </div>
+                <div class="form-field">
+                    <label for="contact-message">Bericht</label>
+                    <textarea id="contact-message" name="message" rows="5" required aria-describedby="message-error"></textarea>
+                    <p class="field-error" id="message-error" aria-live="polite"></p>
+                </div>
+                <button class="btn" type="submit">Submit</button>
+                <p id="form-status" role="status" aria-live="polite"></p>
+            </form>
         </section>
     </main>
 

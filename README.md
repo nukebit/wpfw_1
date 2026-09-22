@@ -1,2 +1,2 @@
 # wpfw_1
-Made with HTML and CSS
+Made with HTML, CSS and Javascript
