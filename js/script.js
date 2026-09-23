@@ -60,8 +60,8 @@ function makeProject(project, index) {
     const number = makeElement("span", "", String(index + 1).padStart(2, "0"));
     number.setAttribute("aria-hidden", "true");
 
-    const header = makeElement("header");
-    header.append(makeElement("p", "meta", project.type === "applicatie" ? "Applicatie" : "Dashboard"), makeElement("h2", "", project.title));
+    const heading = makeElement("div", "project-heading");
+    heading.append(makeElement("p", "meta", project.type === "applicatie" ? "Applicatie" : "Dashboard"), makeElement("h2", "", project.title));
 
     const figure = makeElement("figure", "project-visual");
     const imageLink = makeElement("a");
@@ -77,7 +77,7 @@ function makeProject(project, index) {
     imageLink.append(image);
     figure.append(imageLink, makeElement("figcaption", "", "Conceptpreview"));
 
-    article.append(number, header, figure, makeElement("p", "", project.description));
+    article.append(number, heading, figure, makeElement("p", "", project.description));
     return article;
 }
 
@@ -102,7 +102,7 @@ function compareProjectNames(first, second) {
 
 /**
  * Filters, sorts, and renders the visible project list.
- * reads the current filter and sort controls.
+ * Reads the current filter and sort controls.
  * @returns {void} Updates the page without returning a value.
  */
 function renderProjects() {
@@ -133,46 +133,26 @@ if (projectList) {
  * @typedef {Object} FormField
  * @property {HTMLInputElement|HTMLTextAreaElement} input - The form input.
  * @property {HTMLElement} error - The error message for that input.
+ * @property {string} message - Feedback shown when the HTML rules mark the input invalid.
  */
 const contactForm = document.querySelector("#contact-form");
 const formStatus = document.querySelector("#form-status");
 const fields = [
-    { input: document.querySelector("#contact-name"), error: document.querySelector("#name-error") },
-    { input: document.querySelector("#contact-email"), error: document.querySelector("#email-error") },
-    { input: document.querySelector("#contact-message"), error: document.querySelector("#message-error") }
+    { input: document.querySelector("#contact-name"), error: document.querySelector("#name-error"), message: "Enter at least 2 characters." },
+    { input: document.querySelector("#contact-email"), error: document.querySelector("#email-error"), message: "Enter a valid email address." },
+    { input: document.querySelector("#contact-message"), error: document.querySelector("#message-error"), message: "Enter at least 10 characters." }
 ];
 
 /**
- * Determines the error message for the current input value.
- * @param {HTMLInputElement|HTMLTextAreaElement} input - Input to validate.
- * @returns {string} An error message, or an empty string if valid.
- */
-function getErrorMessage(input) {
-    const value = input.value.trim();
-    if (!value) return "This field is required.";
-    if (input.name === "email" && input.validity.typeMismatch) {
-        return "Enter a valid email address, for example name@example.com.";
-    }
-    if (input.name === "message" && value.length < 10) {
-        return "Write a message of at least 10 characters.";
-    }
-    return "";
-}
-
-/**
- * Validates one input and shows or clears its error message.
- * @param {FormField} field - Input and its error message element.
- * @returns {boolean} True if the input is valid.
+ * Reads the required, type, and minlength rules from HTML and shows feedback.
+ * @param {FormField} field - Input, error element, and message.
+ * @returns {boolean} True when the HTML input rules pass.
  */
 function validateField(field) {
-    const message = getErrorMessage(field.input);
-    field.error.textContent = message;
-    if (message) {
-        field.input.setAttribute("aria-invalid", "true");
-    } else {
-        field.input.removeAttribute("aria-invalid");
-    }
-    return !message;
+    const valid = field.input.checkValidity();
+    field.input.setAttribute("aria-invalid", String(!valid));
+    field.error.textContent = valid ? "" : field.message;
+    return valid;
 }
 
 /**
@@ -183,7 +163,7 @@ function validateField(field) {
 function clearFieldFeedback(event) {
     const input = event.target;
     document.getElementById(input.getAttribute("aria-describedby")).textContent = "";
-    input.removeAttribute("aria-invalid");
+    input.setAttribute("aria-invalid", "false");
     formStatus.textContent = "";
 }
 
@@ -205,7 +185,7 @@ function handleContactSubmit(event) {
         firstInvalidInput.focus();
         return;
     }
-    formStatus.textContent = "Your info is valid. No message sent, this is a demo.";
+    formStatus.textContent = "Your input is valid. No message was sent; this form is a demo.";
 }
 
 if (contactForm) {
