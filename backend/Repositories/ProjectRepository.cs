@@ -36,4 +36,37 @@ public class ProjectRepository
     {
         return _context.Projects.AsNoTracking().FirstOrDefault(project => project.Id == id);
     }
+
+    /**
+     * Inserts a new project into SQL Server and saves its generated id on the model.
+     * @param {Project} project - The new project model, with an id of zero before it is saved.
+     * @returns {void} No return value, saves the project in the database.
+     */
+    public void Create(Project project)
+    {
+        _context.Projects.Add(project);
+        _context.SaveChanges();
+    }
+
+    /**
+     * Saves the changed fields of an existing project in SQL Server.
+     * @param {Project} project - An existing project model with its id and updated fields.
+     * @returns {void} No return value, saves the changes in the database.
+     */
+    public void Update(Project project)
+    {
+        _context.Projects.Update(project);
+        _context.SaveChanges();
+    }
+
+    /**
+     * Removes an existing project from SQL Server.
+     * @param {Project} project - The existing project model to delete.
+     * @returns {void} No return value, deletes the project from the database.
+     */
+    public void Delete(Project project)
+    {
+        _context.Projects.Remove(project);
+        _context.SaveChanges();
+    }
 }
