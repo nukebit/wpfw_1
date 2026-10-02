@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PortfolioApi.Models;
+using PortfolioApi.Services;
 
 namespace PortfolioApi.Controllers;
 
@@ -7,44 +8,30 @@ namespace PortfolioApi.Controllers;
 [Route("api/projects")]
 public class ProjectsController : ControllerBase
 {
-    // temp data
-    private static readonly Project[] Projects =
-    {
-        new Project
-        {
-            Id = 1,
-            Title = "Task management platform",
-            Type = "applicatie",
-            Description = "Een applicatie voor het maken van projecten, verdelen van taken en volgen van de voortgang."
-        },
-        new Project
-        {
-            Id = 2,
-            Title = "Event booking application",
-            Type = "applicatie",
-            Description = "Een applicatie waarin gebruikers evenementen bekijken, plaatsen reserveren en boekingen beheren."
-        },
-        new Project
-        {
-            Id = 3,
-            Title = "Inventory dashboard",
-            Type = "dashboard",
-            Description = "Een dashboard voor productbeheer, voorraadupdates en meldingen bij lage voorraad."
-        }
-    };
+    private readonly ProjectService _projectService;
 
     /**
-     * Returns all projects from the temporary data. No parameters are required.
+     * Receives the project service through dependency injection.
+     * @param {ProjectService} projectService - Service used to retrieve projects.
+     * @returns {void} No return value, initializes the controller.
+     */
+    public ProjectsController(ProjectService projectService)
+    {
+        _projectService = projectService;
+    }
+
+    /**
+     * Requests all projects from the service. No parameters are required.
      * @returns {ActionResult<Project[]>} HTTP 200 with the project list as JSON.
      */
     [HttpGet]
     public ActionResult<Project[]> GetAll()
     {
-        return Ok(Projects);
+        return Ok(_projectService.GetAll());
     }
 
     /**
-     * Looks up one project in the temporary data using its id.
+     * Requests one project from the service and chooses the HTTP response.
      * @param {int} id - The id of the requested project.
      * @returns {ActionResult<Project>} HTTP 200 with the project as JSON, or HTTP 404 if it does not exist.
      */
@@ -53,7 +40,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<Project> GetById(int id)
     {
-        var project = Array.Find(Projects, project => project.Id == id);
+        var project = _projectService.GetById(id);
 
         if (project is null)
         {

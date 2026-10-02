@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PortfolioApi.Models;
+using PortfolioApi.Services;
 
 namespace PortfolioApi.Controllers;
 
@@ -7,47 +8,30 @@ namespace PortfolioApi.Controllers;
 [Route("api/blogposts")]
 public class BlogPostsController : ControllerBase
 {
-    // temp data
-    private static readonly BlogPost[] BlogPosts =
-    {
-        new BlogPost
-        {
-            Id = 1,
-            Title = "Validate iedere API request",
-            Category = "Laravel",
-            Content = "Form requests houden validation rules buiten de controllers. Ongeldige data komt hierdoor niet in de application logic terecht.",
-            PublishedOn = new DateOnly(2026, 9, 7)
-        },
-        new BlogPost
-        {
-            Id = 2,
-            Title = "Bewaar state bij de juiste component",
-            Category = "React",
-            Content = "Local state is geschikt voor tijdelijke data. Gedeelde server data gaat via een duidelijke API layer.",
-            PublishedOn = new DateOnly(2026, 9, 8)
-        },
-        new BlogPost
-        {
-            Id = 3,
-            Title = "Maak API responses voorspelbaar",
-            Category = "REST API",
-            Content = "Een vaste JSON structure maakt succesvolle requests en errors eenvoudiger af te handelen in React.",
-            PublishedOn = new DateOnly(2026, 9, 9)
-        }
-    };
+    private readonly BlogPostService _blogPostService;
 
     /**
-     * Returns all blog posts from the temporary data. No parameters are required.
+     * Receives the blog post service through dependency injection.
+     * @param {BlogPostService} blogPostService - Service used to retrieve blog posts.
+     * @returns {void} No return value, initializes the controller.
+     */
+    public BlogPostsController(BlogPostService blogPostService)
+    {
+        _blogPostService = blogPostService;
+    }
+
+    /**
+     * Requests all blog posts from the service. No parameters are required.
      * @returns {ActionResult<BlogPost[]>} HTTP 200 with the blog post list as JSON.
      */
     [HttpGet]
     public ActionResult<BlogPost[]> GetAll()
     {
-        return Ok(BlogPosts);
+        return Ok(_blogPostService.GetAll());
     }
 
     /**
-     * Looks up one blog post in the temporary data using its id.
+     * Requests one blog post from the service and chooses the HTTP response.
      * @param {int} id - The id of the requested blog post.
      * @returns {ActionResult<BlogPost>} HTTP 200 with the blog post as JSON, or HTTP 404 if it does not exist.
      */
@@ -56,7 +40,7 @@ public class BlogPostsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<BlogPost> GetById(int id)
     {
-        var blogPost = Array.Find(BlogPosts, blogPost => blogPost.Id == id);
+        var blogPost = _blogPostService.GetById(id);
 
         if (blogPost is null)
         {
