@@ -1,51 +1,39 @@
+using Microsoft.EntityFrameworkCore;
+using PortfolioApi.Data;
 using PortfolioApi.Models;
 
 namespace PortfolioApi.Repositories;
 
 public class ProjectRepository
 {
-    // temp data
-    private static readonly Project[] Projects =
-    {
-        new Project
-        {
-            Id = 1,
-            Title = "Task management platform",
-            Type = "applicatie",
-            Description = "Een applicatie voor het maken van projecten, verdelen van taken en volgen van de voortgang."
-        },
-        new Project
-        {
-            Id = 2,
-            Title = "Event booking application",
-            Type = "applicatie",
-            Description = "Een applicatie waarin gebruikers evenementen bekijken, plaatsen reserveren en boekingen beheren."
-        },
-        new Project
-        {
-            Id = 3,
-            Title = "Inventory dashboard",
-            Type = "dashboard",
-            Description = "Een dashboard voor productbeheer, voorraadupdates en meldingen bij lage voorraad."
-        }
-    };
+    private readonly PortfolioDbContext _context;
 
     /**
-     * Reads all projects from the temporary data. No parameters are required.
-     * @returns {Project[]} The complete project list.
+     * Receives the database context through dependency injection.
+     * @param {PortfolioDbContext} context - EF Core context used to access the projects table.
+     * @returns {void} No return value, initializes the repository.
      */
-    public Project[] GetAll()
+    public ProjectRepository(PortfolioDbContext context)
     {
-        return Projects;
+        _context = context;
     }
 
     /**
-     * Searches the temporary data for a project with the requested id.
+     * Reads all projects from SQL Server in id order. No parameters are required.
+     * @returns {Project[]} The complete project list, or an empty array if the table is empty.
+     */
+    public Project[] GetAll()
+    {
+        return _context.Projects.AsNoTracking().OrderBy(project => project.Id).ToArray();
+    }
+
+    /**
+     * Searches SQL Server for a project with the requested id.
      * @param {int} id - The id to search for.
      * @returns {Project?} The matching project, or null if no match exists.
      */
     public Project? GetById(int id)
     {
-        return Array.Find(Projects, project => project.Id == id);
+        return _context.Projects.AsNoTracking().FirstOrDefault(project => project.Id == id);
     }
 }
