@@ -36,4 +36,37 @@ public class BlogPostRepository
     {
         return _context.BlogPosts.AsNoTracking().FirstOrDefault(blogPost => blogPost.Id == id);
     }
+
+    /**
+     * Inserts a new blog post into SQL Server and saves its generated id on the model.
+     * @param {BlogPost} blogPost - The new blog post model, with an id of zero before it is saved.
+     * @returns {void} No return value, saves the blog post in the database.
+     */
+    public void Create(BlogPost blogPost)
+    {
+        _context.BlogPosts.Add(blogPost);
+        _context.SaveChanges();
+    }
+
+    /**
+     * Saves the changed fields of an existing blog post in SQL Server.
+     * @param {BlogPost} blogPost - An existing blog post model with its id and updated fields.
+     * @returns {void} No return value, saves the changes in the database.
+     */
+    public void Update(BlogPost blogPost)
+    {
+        _context.BlogPosts.Update(blogPost);
+        _context.SaveChanges();
+    }
+
+    /**
+     * Removes an existing blog post from SQL Server.
+     * @param {BlogPost} blogPost - The existing blog post model to delete.
+     * @returns {void} No return value, deletes the blog post from the database.
+     */
+    public void Delete(BlogPost blogPost)
+    {
+        _context.BlogPosts.Remove(blogPost);
+        _context.SaveChanges();
+    }
 }
