@@ -185,7 +185,7 @@ function handleContactSubmit(event) {
         firstInvalidInput.focus();
         return;
     }
-    formStatus.textContent = "Your input is valid. No message was sent; this form is a demo.";
+    formStatus.textContent = "Your info is valid. No message sent, this is a demo.";
 }
 
 if (contactForm) {

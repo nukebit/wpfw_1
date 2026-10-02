@@ -12,5 +12,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Match incoming requests to the routes defined in the controllers.
+app.UseRouting();
 app.MapControllers();
 app.Run();
