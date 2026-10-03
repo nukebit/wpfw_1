@@ -34,18 +34,21 @@ public class BlogPostsController : ControllerBase
     /**
      * Requests one blog post from the service and chooses the HTTP response.
      * @param {int} id - The id of the requested blog post.
-     * @returns {ActionResult<BlogPostDto>} HTTP 200 with the blog post DTO as JSON, or HTTP 404 if it does not exist.
+     * @returns {ActionResult<BlogPostDto>} HTTP 200 with the blog post DTO, or HTTP 404 with error details if it does not exist.
      */
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public ActionResult<BlogPostDto> GetById(int id)
     {
         var blogPost = _blogPostService.GetById(id);
 
         if (blogPost is null)
         {
-            return NotFound();
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Blog post not found.",
+                detail: $"No blog post exists with id {id}.");
         }
 
         return Ok(blogPost);
@@ -69,19 +72,22 @@ public class BlogPostsController : ControllerBase
      * Replaces the editable fields of an existing blog post using a validated JSON request body.
      * @param {int} id - The id of the blog post to update, taken from the URL.
      * @param {UpdateBlogPostDto} dto - Required title, category, content, and publication date in YYYY-MM-DD format.
-     * @returns {IActionResult} HTTP 204 on success, HTTP 400 for invalid input, or HTTP 404 if the blog post does not exist.
+     * @returns {IActionResult} HTTP 204 on success, HTTP 400 for invalid input, or HTTP 404 with error details for a missing blog post.
      */
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public IActionResult Update(int id, [FromBody] UpdateBlogPostDto dto)
     {
         var updated = _blogPostService.Update(id, dto);
 
         if (!updated)
         {
-            return NotFound();
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Blog post not found.",
+                detail: $"No blog post exists with id {id}.");
         }
 
         return NoContent();
@@ -90,18 +96,21 @@ public class BlogPostsController : ControllerBase
     /**
      * Deletes a blog post with the requested id.
      * @param {int} id - The id of the blog post to delete, taken from the URL.
-     * @returns {IActionResult} HTTP 204 on success, or HTTP 404 if the blog post does not exist.
+     * @returns {IActionResult} HTTP 204 on success, or HTTP 404 with error details for a missing blog post.
      */
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public IActionResult Delete(int id)
     {
         var deleted = _blogPostService.Delete(id);
 
         if (!deleted)
         {
-            return NotFound();
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Blog post not found.",
+                detail: $"No blog post exists with id {id}.");
         }
 
         return NoContent();
