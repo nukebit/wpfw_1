@@ -26,7 +26,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    // Create the database and add example data when the tables are empty.
+    // Create the database and add example data if the tables are empty.
     using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<PortfolioDbContext>();
     DbInitializer.Initialize(context);
