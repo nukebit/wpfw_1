@@ -5,6 +5,14 @@ using PortfolioApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load this computer's database settings without putting its password in Git.
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration
+        .AddJsonFile("appsettings.Local.json", optional: true)
+        .AddEnvironmentVariables();
+}
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -1,10 +1,10 @@
 // Projects
 /**
- * Data for one project card: four fields.
+ * The data used for a project card.
  * @typedef {Object} Project
- * @property {string} type - Filter value: applicatie or dashboard.
+ * @property {string} type - Project type: applicatie or dashboard.
  * @property {string} title - Project name.
- * @property {string} image -  Folder path to the image.
+ * @property {string} image - Path to the project image.
  * @property {string} description - Short project summary.
  */
 const projects = [
@@ -34,24 +34,24 @@ const projectFilter = document.querySelector("#project-filter");
 const projectSort = document.querySelector("#project-sort");
 
 /**
- * Creates an HTML element with an optional class and text.
- * @param {string} tag - HTML tag, such as "p" or "section".
- * @param {string} [className] - CSS class, omitted means no class.
- * @param {string} [text] - Text content, omitted means no text.
+ * Makes an HTML element with a class and text.
+ * @param {string} tag - The HTML tag, such as "p".
+ * @param {string} [className=""] - Optional CSS class.
+ * @param {string} [text=""] - Optional text to show.
  * @returns {HTMLElement} The new element.
  */
-function makeElement(tag, className, text) {
+function makeElement(tag, className = "", text = "") {
     const element = document.createElement(tag);
-    if (className) element.className = className;
-    if (text) element.textContent = text;
+    element.className = className;
+    element.textContent = text;
     return element;
 }
 
 /**
- * Builds a complete project card from project data.
- * @param {Project} project - Data for the project.
- * @param {number} index - Zero based position in the visible list.
- * @returns {HTMLElement} The new article element.
+ * Makes a project card.
+ * @param {Project} project - The project's data.
+ * @param {number} index - Its position in the list, starting at zero.
+ * @returns {HTMLElement} The project card.
  */
 function makeProject(project, index) {
     const article = makeElement("article", "project");
@@ -61,7 +61,10 @@ function makeProject(project, index) {
     number.setAttribute("aria-hidden", "true");
 
     const heading = makeElement("div", "project-heading");
-    heading.append(makeElement("p", "meta", project.type === "applicatie" ? "Applicatie" : "Dashboard"), makeElement("h2", "", project.title));
+    heading.append(
+        makeElement("p", "meta", project.type === "applicatie" ? "Applicatie" : "Dashboard"),
+        makeElement("h2", "", project.title)
+    );
 
     const figure = makeElement("figure", "project-visual");
     const imageLink = makeElement("a");
@@ -82,8 +85,8 @@ function makeProject(project, index) {
 }
 
 /**
- * Checks whether a project matches the selected filter.
- * @param {Project} project - Project to check.
+ * Checks if a project matches the filter.
+ * @param {Project} project - The project to check.
  * @returns {boolean} True if the project should be visible.
  */
 function matchesSelectedType(project) {
@@ -91,19 +94,18 @@ function matchesSelectedType(project) {
 }
 
 /**
- * Compares two project names for a-z sorting.
- * @param {Project} first - First project.
- * @param {Project} second - Second project.
- * @returns {number} The ordering value for Array.sort().
+ * Compares project names to sort them from A to Z.
+ * @param {Project} first - The first project.
+ * @param {Project} second - The second project.
+ * @returns {number} A negative, zero, or positive number to set their order.
  */
 function compareProjectNames(first, second) {
     return first.title.localeCompare(second.title, "nl");
 }
 
 /**
- * Filters, sorts, and renders the visible project list.
- * Reads the current filter and sort controls.
- * @returns {void} Updates the page without returning a value.
+ * Shows the projects using the chosen filter and sort order.
+ * @returns {void} Updates the page.
  */
 function renderProjects() {
     const visibleProjects = projects.filter(matchesSelectedType);
@@ -129,11 +131,11 @@ if (projectList) {
 
 // Contact form
 /**
- * A form input and its error message element.
+ * A form input and its error message.
  * @typedef {Object} FormField
  * @property {HTMLInputElement|HTMLTextAreaElement} input - The form input.
  * @property {HTMLElement} error - The error message for that input.
- * @property {string} message - Feedback shown when the HTML rules mark the input invalid.
+ * @property {string} message - Text to show when the input is invalid.
  */
 const contactForm = document.querySelector("#contact-form");
 const formStatus = document.querySelector("#form-status");
@@ -144,9 +146,9 @@ const fields = [
 ];
 
 /**
- * Reads the required, type, and minlength rules from HTML and shows feedback.
- * @param {FormField} field - Input, error element, and message.
- * @returns {boolean} True when the HTML input rules pass.
+ * Checks an input and shows its error message.
+ * @param {FormField} field - The input, error element, and message.
+ * @returns {boolean} True when the input is valid.
  */
 function validateField(field) {
     const valid = field.input.checkValidity();
@@ -156,9 +158,9 @@ function validateField(field) {
 }
 
 /**
- * Clears old feedback when the user changes a form field.
- * @param {Event} event - Input event from a form field.
- * @returns {void} Updates the page without returning a value.
+ * Clears errors when the user changes an input.
+ * @param {Event} event - The input event.
+ * @returns {void} Updates the page.
  */
 function clearFieldFeedback(event) {
     const input = event.target;
@@ -168,9 +170,9 @@ function clearFieldFeedback(event) {
 }
 
 /**
- * Prevents submission, validates all inputs, and shows feedback.
- * @param {SubmitEvent} event - Submit event from the contact form.
- * @returns {void} Updates the page without returning a value.
+ * Checks the form and shows whether the input is valid.
+ * @param {SubmitEvent} event - The form's submit event.
+ * @returns {void} Updates the page.
  */
 function handleContactSubmit(event) {
     event.preventDefault();
@@ -197,12 +199,11 @@ if (contactForm) {
 const weatherStatus = document.querySelector("#weather-status");
 const weatherResult = document.querySelector("#weather-result");
 const weatherRetry = document.querySelector("#weather-retry");
-const weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=52.08&longitude=4.31&current=temperature_2m,relative_humidity_2m&timezone=Europe%2FAmsterdam";
 
 /**
- * Displays temperature and humidity from the API response.
- * @param {{temperature_2m: number, relative_humidity_2m: number}} weather - Current weather values.
- * @returns {void} Updates the page without returning a value.
+ * Shows the temperature and humidity.
+ * @param {{temperature_2m: number, relative_humidity_2m: number}} weather - The current weather.
+ * @returns {void} Updates the page.
  */
 function showWeather(weather) {
     const temperature = document.createElement("p");
@@ -216,9 +217,8 @@ function showWeather(weather) {
 }
 
 /**
- * Fetches current weather and shows loading, success, or error feedback.
- * fetches data for the fixed location in weatherUrl.
- * @returns {Promise<void>} Resolves after the fetch and display steps finish.
+ * Loads the weather and shows a loading message, result, or error.
+ * @returns {Promise<void>} Finishes when the page has been updated.
  */
 async function loadWeather() {
     weatherStatus.textContent = "The weather is loading...";
@@ -226,13 +226,8 @@ async function loadWeather() {
     weatherRetry.hidden = true;
 
     try {
-        const response = await fetch(weatherUrl);
-        if (!response.ok) throw new Error("The weather API is unavailable");
-        const data = await response.json();
-        if (!data.current || !Number.isFinite(data.current.temperature_2m) || !Number.isFinite(data.current.relative_humidity_2m)) {
-            throw new Error("No current weather data is available");
-        }
-        showWeather(data.current);
+        const weather = await getWeather();
+        showWeather(weather);
         weatherStatus.textContent = "Weather in The Hague";
     } catch {
         weatherStatus.textContent = "The weather could not be loaded. Please try again later.";
