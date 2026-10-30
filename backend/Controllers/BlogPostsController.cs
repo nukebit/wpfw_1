@@ -8,40 +8,40 @@ namespace PortfolioApi.Controllers;
 [Route("api/blogposts")]
 public class BlogPostsController : ControllerBase
 {
-    private readonly BlogPostService _blogPostService;
+    private readonly IBlogPostService _blogPostService;
 
     /**
      * Receives the blog post service through dependency injection.
-     * @param {BlogPostService} blogPostService - Service used to retrieve blog posts.
+     * @param {IBlogPostService} blogPostService - Service used to retrieve blog posts.
      * @returns {void} No return value, initializes the controller.
      */
-    public BlogPostsController(BlogPostService blogPostService)
+    public BlogPostsController(IBlogPostService blogPostService)
     {
         _blogPostService = blogPostService;
     }
 
     /**
      * Requests all blog posts as output DTOs. No parameters are required.
-     * @returns {ActionResult<BlogPostDto[]>} HTTP 200 with the blog post list as JSON.
+     * @returns {Task<ActionResult<BlogPostDto[]>>} HTTP 200 with the blog post list as JSON.
      */
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<BlogPostDto[]> GetAll()
+    public async Task<ActionResult<BlogPostDto[]>> GetAll(CancellationToken cancellationToken)
     {
-        return Ok(_blogPostService.GetAll());
+        return Ok(await _blogPostService.GetAllAsync(cancellationToken));
     }
 
     /**
      * Requests one blog post from the service and chooses the HTTP response.
      * @param {int} id - The id of the requested blog post.
-     * @returns {ActionResult<BlogPostDto>} HTTP 200 with the blog post DTO, or HTTP 404 with error details if it does not exist.
+     * @returns {Task<ActionResult<BlogPostDto>>} HTTP 200 with the blog post DTO, or HTTP 404 with error details if it does not exist.
      */
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public ActionResult<BlogPostDto> GetById(int id)
+    public async Task<ActionResult<BlogPostDto>> GetById(int id, CancellationToken cancellationToken)
     {
-        var blogPost = _blogPostService.GetById(id);
+        var blogPost = await _blogPostService.GetByIdAsync(id, cancellationToken);
 
         if (blogPost is null)
         {
@@ -57,14 +57,14 @@ public class BlogPostsController : ControllerBase
     /**
      * Creates a blog post from the validated JSON request body.
      * @param {CreateBlogPostDto} dto - Required title, category, content, and publication date in YYYY-MM-DD format.
-     * @returns {ActionResult<BlogPostDto>} HTTP 201 with the created blog post and its URL, or HTTP 400 for invalid input.
+     * @returns {Task<ActionResult<BlogPostDto>>} HTTP 201 with the created blog post and its URL, or HTTP 400 for invalid input.
      */
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public ActionResult<BlogPostDto> Create([FromBody] CreateBlogPostDto dto)
+    public async Task<ActionResult<BlogPostDto>> Create([FromBody] CreateBlogPostDto dto, CancellationToken cancellationToken)
     {
-        var blogPost = _blogPostService.Create(dto);
+        var blogPost = await _blogPostService.CreateAsync(dto, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = blogPost.Id }, blogPost);
     }
 
@@ -72,15 +72,15 @@ public class BlogPostsController : ControllerBase
      * Replaces the editable fields of an existing blog post using a validated JSON request body.
      * @param {int} id - The id of the blog post to update, taken from the URL.
      * @param {UpdateBlogPostDto} dto - Required title, category, content, and publication date in YYYY-MM-DD format.
-     * @returns {IActionResult} HTTP 204 on success, HTTP 400 for invalid input, or HTTP 404 with error details for a missing blog post.
+     * @returns {Task<IActionResult>} HTTP 204 on success, HTTP 400 for invalid input, or HTTP 404 with error details for a missing blog post.
      */
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public IActionResult Update(int id, [FromBody] UpdateBlogPostDto dto)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateBlogPostDto dto, CancellationToken cancellationToken)
     {
-        var updated = _blogPostService.Update(id, dto);
+        var updated = await _blogPostService.UpdateAsync(id, dto, cancellationToken);
 
         if (!updated)
         {
@@ -96,14 +96,14 @@ public class BlogPostsController : ControllerBase
     /**
      * Deletes a blog post with the requested id.
      * @param {int} id - The id of the blog post to delete, taken from the URL.
-     * @returns {IActionResult} HTTP 204 on success, or HTTP 404 with error details for a missing blog post.
+     * @returns {Task<IActionResult>} HTTP 204 on success, or HTTP 404 with error details for a missing blog post.
      */
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        var deleted = _blogPostService.Delete(id);
+        var deleted = await _blogPostService.DeleteAsync(id, cancellationToken);
 
         if (!deleted)
         {

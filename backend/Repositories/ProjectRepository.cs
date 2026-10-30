@@ -4,7 +4,7 @@ using PortfolioApi.Models;
 
 namespace PortfolioApi.Repositories;
 
-public class ProjectRepository
+public class ProjectRepository : IProjectRepository
 {
     private readonly PortfolioDbContext _context;
 
@@ -20,53 +20,53 @@ public class ProjectRepository
 
     /**
      * Reads all projects from SQL Server in id order. No parameters are required.
-     * @returns {Project[]} The complete project list, or an empty array if the table is empty.
+     * @returns {Task<IReadOnlyList<Project>>} The complete project list, or an empty list if the table is empty.
      */
-    public Project[] GetAll()
+    public async Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return _context.Projects.AsNoTracking().OrderBy(project => project.Id).ToArray();
+        return await _context.Projects.AsNoTracking().OrderBy(project => project.Id).ToListAsync(cancellationToken);
     }
 
     /**
      * Searches SQL Server for a project with the requested id.
      * @param {int} id - The id to search for.
-     * @returns {Project?} The matching project, or null if no match exists.
+     * @returns {Task<Project?>} The matching project, or null if no match exists.
      */
-    public Project? GetById(int id)
+    public async Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return _context.Projects.AsNoTracking().FirstOrDefault(project => project.Id == id);
+        return await _context.Projects.AsNoTracking().FirstOrDefaultAsync(project => project.Id == id, cancellationToken);
     }
 
     /**
      * Inserts a new project into SQL Server and saves its generated id on the model.
      * @param {Project} project - The new project model, with an id of zero before it is saved.
-     * @returns {void} No return value, saves the project in the database.
+     * @returns {Task} No return value, saves the project in the database.
      */
-    public void Create(Project project)
+    public async Task CreateAsync(Project project, CancellationToken cancellationToken = default)
     {
         _context.Projects.Add(project);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     /**
      * Saves the changed fields of an existing project in SQL Server.
      * @param {Project} project - An existing project model with its id and updated fields.
-     * @returns {void} No return value, saves the changes in the database.
+     * @returns {Task} No return value, saves the changes in the database.
      */
-    public void Update(Project project)
+    public async Task UpdateAsync(Project project, CancellationToken cancellationToken = default)
     {
         _context.Projects.Update(project);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     /**
      * Removes an existing project from SQL Server.
      * @param {Project} project - The existing project model to delete.
-     * @returns {void} No return value, deletes the project from the database.
+     * @returns {Task} No return value, deletes the project from the database.
      */
-    public void Delete(Project project)
+    public async Task DeleteAsync(Project project, CancellationToken cancellationToken = default)
     {
         _context.Projects.Remove(project);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

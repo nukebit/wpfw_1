@@ -8,40 +8,40 @@ namespace PortfolioApi.Controllers;
 [Route("api/projects")]
 public class ProjectsController : ControllerBase
 {
-    private readonly ProjectService _projectService;
+    private readonly IProjectService _projectService;
 
     /**
      * Receives the project service through dependency injection.
-     * @param {ProjectService} projectService - Service used to retrieve projects.
+     * @param {IProjectService} projectService - Service used to retrieve projects.
      * @returns {void} No return value, initializes the controller.
      */
-    public ProjectsController(ProjectService projectService)
+    public ProjectsController(IProjectService projectService)
     {
         _projectService = projectService;
     }
 
     /**
      * Requests all projects as output DTOs. No parameters are required.
-     * @returns {ActionResult<ProjectDto[]>} HTTP 200 with the project list as JSON.
+     * @returns {Task<ActionResult<ProjectDto[]>>} HTTP 200 with the project list as JSON.
      */
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<ProjectDto[]> GetAll()
+    public async Task<ActionResult<ProjectDto[]>> GetAll(CancellationToken cancellationToken)
     {
-        return Ok(_projectService.GetAll());
+        return Ok(await _projectService.GetAllAsync(cancellationToken));
     }
 
     /**
      * Requests one project from the service and chooses the HTTP response.
      * @param {int} id - The id of the requested project.
-     * @returns {ActionResult<ProjectDto>} HTTP 200 with the project DTO, or HTTP 404 with error details if it does not exist.
+     * @returns {Task<ActionResult<ProjectDto>>} HTTP 200 with the project DTO, or HTTP 404 with error details if it does not exist.
      */
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public ActionResult<ProjectDto> GetById(int id)
+    public async Task<ActionResult<ProjectDto>> GetById(int id, CancellationToken cancellationToken)
     {
-        var project = _projectService.GetById(id);
+        var project = await _projectService.GetByIdAsync(id, cancellationToken);
 
         if (project is null)
         {
@@ -57,14 +57,14 @@ public class ProjectsController : ControllerBase
     /**
      * Creates a project from the validated JSON request body.
      * @param {CreateProjectDto} dto - Required title, type, and description within the DTO length limits.
-     * @returns {ActionResult<ProjectDto>} HTTP 201 with the created project and its URL, or HTTP 400 for invalid input.
+     * @returns {Task<ActionResult<ProjectDto>>} HTTP 201 with the created project and its URL, or HTTP 400 for invalid input.
      */
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public ActionResult<ProjectDto> Create([FromBody] CreateProjectDto dto)
+    public async Task<ActionResult<ProjectDto>> Create([FromBody] CreateProjectDto dto, CancellationToken cancellationToken)
     {
-        var project = _projectService.Create(dto);
+        var project = await _projectService.CreateAsync(dto, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = project.Id }, project);
     }
 
@@ -72,15 +72,15 @@ public class ProjectsController : ControllerBase
      * Replaces the editable fields of an existing project using a validated JSON request body.
      * @param {int} id - The id of the project to update, taken from the URL.
      * @param {UpdateProjectDto} dto - Required title, type, and description within the DTO length limits.
-     * @returns {IActionResult} HTTP 204 on success, HTTP 400 for invalid input, or HTTP 404 with error details for a missing project.
+     * @returns {Task<IActionResult>} HTTP 204 on success, HTTP 400 for invalid input, or HTTP 404 with error details for a missing project.
      */
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public IActionResult Update(int id, [FromBody] UpdateProjectDto dto)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateProjectDto dto, CancellationToken cancellationToken)
     {
-        var updated = _projectService.Update(id, dto);
+        var updated = await _projectService.UpdateAsync(id, dto, cancellationToken);
 
         if (!updated)
         {
@@ -96,14 +96,14 @@ public class ProjectsController : ControllerBase
     /**
      * Deletes a project with the requested id.
      * @param {int} id - The id of the project to delete, taken from the URL.
-     * @returns {IActionResult} HTTP 204 on success, or HTTP 404 with error details for a missing project.
+     * @returns {Task<IActionResult>} HTTP 204 on success, or HTTP 404 with error details for a missing project.
      */
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        var deleted = _projectService.Delete(id);
+        var deleted = await _projectService.DeleteAsync(id, cancellationToken);
 
         if (!deleted)
         {

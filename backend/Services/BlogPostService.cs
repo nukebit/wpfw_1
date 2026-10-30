@@ -4,42 +4,43 @@ using PortfolioApi.Repositories;
 
 namespace PortfolioApi.Services;
 
-public class BlogPostService
+public class BlogPostService : IBlogPostService
 {
-    private readonly BlogPostRepository _blogPostRepository;
+    private readonly IBlogPostRepository _blogPostRepository;
 
     /**
      * Receives the blog post repository through dependency injection.
-     * @param {BlogPostRepository} blogPostRepository - Repository used to access blog post data.
+     * @param {IBlogPostRepository} blogPostRepository - Repository used to access blog post data.
      * @returns {void} No return value, initializes the service.
      */
-    public BlogPostService(BlogPostRepository blogPostRepository)
+    public BlogPostService(IBlogPostRepository blogPostRepository)
     {
         _blogPostRepository = blogPostRepository;
     }
 
     /**
      * Retrieves all blog posts and converts them to output DTOs. No parameters are required.
-     * @returns {BlogPostDto[]} The complete blog post list as DTOs.
+     * @returns {Task<BlogPostDto[]>} The complete blog post list as DTOs.
      */
-    public BlogPostDto[] GetAll()
+    public async Task<BlogPostDto[]> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return _blogPostRepository.GetAll().Select(blogPost => ToDto(blogPost)).ToArray();
+        var items = await _blogPostRepository.GetAllAsync(cancellationToken);
+        return items.Select(ToDto).ToArray();
     }
 
     /**
      * Checks the requested id before retrieving a blog post from the repository.
      * @param {int} id - The blog post id, which must be greater than zero.
-     * @returns {BlogPostDto?} The blog post DTO, or null if the id is invalid or the blog post does not exist.
+     * @returns {Task<BlogPostDto?>} The blog post DTO, or null if the id is invalid or the blog post does not exist.
      */
-    public BlogPostDto? GetById(int id)
+    public async Task<BlogPostDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         if (id <= 0)
         {
             return null;
         }
 
-        var blogPost = _blogPostRepository.GetById(id);
+        var blogPost = await _blogPostRepository.GetByIdAsync(id, cancellationToken);
 
         if (blogPost is null)
         {
@@ -52,9 +53,9 @@ public class BlogPostService
     /**
      * Converts validated input to a blog post, trims its text, and saves it through the repository.
      * @param {CreateBlogPostDto} dto - Blog post input that has passed the controller's DTO validation.
-     * @returns {BlogPostDto} The saved blog post with its database-generated id.
+     * @returns {Task<BlogPostDto>} The saved blog post with its database-generated id.
      */
-    public BlogPostDto Create(CreateBlogPostDto dto)
+    public async Task<BlogPostDto> CreateAsync(CreateBlogPostDto dto, CancellationToken cancellationToken = default)
     {
         var publishedOn = dto.PublishedOn
             ?? throw new ArgumentException("Publication date is required.", nameof(dto));
@@ -67,7 +68,7 @@ public class BlogPostService
             PublishedOn = publishedOn
         };
 
-        _blogPostRepository.Create(blogPost);
+        await _blogPostRepository.CreateAsync(blogPost, cancellationToken);
         return ToDto(blogPost);
     }
 
@@ -75,16 +76,16 @@ public class BlogPostService
      * Finds a blog post and replaces its editable fields with validated input.
      * @param {int} id - The blog post id, which must be greater than zero.
      * @param {UpdateBlogPostDto} dto - Blog post input that has passed the controller's DTO validation.
-     * @returns {bool} True when the blog post is updated, or false if the id is invalid or the blog post does not exist.
+     * @returns {Task<bool>} True when the blog post is updated, or false if the id is invalid or the blog post does not exist.
      */
-    public bool Update(int id, UpdateBlogPostDto dto)
+    public async Task<bool> UpdateAsync(int id, UpdateBlogPostDto dto, CancellationToken cancellationToken = default)
     {
         if (id <= 0)
         {
             return false;
         }
 
-        var blogPost = _blogPostRepository.GetById(id);
+        var blogPost = await _blogPostRepository.GetByIdAsync(id, cancellationToken);
 
         if (blogPost is null)
         {
@@ -99,30 +100,30 @@ public class BlogPostService
         blogPost.Content = dto.Content.Trim();
         blogPost.PublishedOn = publishedOn;
 
-        _blogPostRepository.Update(blogPost);
+        await _blogPostRepository.UpdateAsync(blogPost, cancellationToken);
         return true;
     }
 
     /**
      * Finds a blog post and asks the repository to delete it.
      * @param {int} id - The blog post id, which must be greater than zero.
-     * @returns {bool} True when the blog post is deleted, or false if the id is invalid or the blog post does not exist.
+     * @returns {Task<bool>} True when the blog post is deleted, or false if the id is invalid or the blog post does not exist.
      */
-    public bool Delete(int id)
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
         if (id <= 0)
         {
             return false;
         }
 
-        var blogPost = _blogPostRepository.GetById(id);
+        var blogPost = await _blogPostRepository.GetByIdAsync(id, cancellationToken);
 
         if (blogPost is null)
         {
             return false;
         }
 
-        _blogPostRepository.Delete(blogPost);
+        await _blogPostRepository.DeleteAsync(blogPost, cancellationToken);
         return true;
     }
 

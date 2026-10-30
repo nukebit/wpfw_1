@@ -4,42 +4,43 @@ using PortfolioApi.Repositories;
 
 namespace PortfolioApi.Services;
 
-public class ProjectService
+public class ProjectService : IProjectService
 {
-    private readonly ProjectRepository _projectRepository;
+    private readonly IProjectRepository _projectRepository;
 
     /**
      * Receives the project repository through dependency injection.
-     * @param {ProjectRepository} projectRepository - Repository used to access project data.
+     * @param {IProjectRepository} projectRepository - Repository used to access project data.
      * @returns {void} No return value, initializes the service.
      */
-    public ProjectService(ProjectRepository projectRepository)
+    public ProjectService(IProjectRepository projectRepository)
     {
         _projectRepository = projectRepository;
     }
 
     /**
      * Retrieves all projects and converts them to output DTOs. No parameters are required.
-     * @returns {ProjectDto[]} The complete project list as DTOs.
+     * @returns {Task<ProjectDto[]>} The complete project list as DTOs.
      */
-    public ProjectDto[] GetAll()
+    public async Task<ProjectDto[]> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return _projectRepository.GetAll().Select(project => ToDto(project)).ToArray();
+        var items = await _projectRepository.GetAllAsync(cancellationToken);
+        return items.Select(ToDto).ToArray();
     }
 
     /**
      * Checks the requested id before retrieving a project from the repository.
      * @param {int} id - The project id, which must be greater than zero.
-     * @returns {ProjectDto?} The project DTO, or null if the id is invalid or the project does not exist.
+     * @returns {Task<ProjectDto?>} The project DTO, or null if the id is invalid or the project does not exist.
      */
-    public ProjectDto? GetById(int id)
+    public async Task<ProjectDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         if (id <= 0)
         {
             return null;
         }
 
-        var project = _projectRepository.GetById(id);
+        var project = await _projectRepository.GetByIdAsync(id, cancellationToken);
 
         if (project is null)
         {
@@ -52,9 +53,9 @@ public class ProjectService
     /**
      * Converts validated input to a project, trims its text, and saves it through the repository.
      * @param {CreateProjectDto} dto - Project input that has passed the controller's DTO validation.
-     * @returns {ProjectDto} The saved project with its id.
+     * @returns {Task<ProjectDto>} The saved project with its id.
      */
-    public ProjectDto Create(CreateProjectDto dto)
+    public async Task<ProjectDto> CreateAsync(CreateProjectDto dto, CancellationToken cancellationToken = default)
     {
         var project = new Project
         {
@@ -63,7 +64,7 @@ public class ProjectService
             Description = dto.Description.Trim()
         };
 
-        _projectRepository.Create(project);
+        await _projectRepository.CreateAsync(project, cancellationToken);
         return ToDto(project);
     }
 
@@ -71,16 +72,16 @@ public class ProjectService
      * Finds a project and replaces its editable fields with trimmed input.
      * @param {int} id - The project id, which must be greater than zero.
      * @param {UpdateProjectDto} dto - Project input that has passed the controller's DTO validation.
-     * @returns {bool} True when the project is updated, or false if the id is invalid or the project does not exist.
+     * @returns {Task<bool>} True when the project is updated, or false if the id is invalid or the project does not exist.
      */
-    public bool Update(int id, UpdateProjectDto dto)
+    public async Task<bool> UpdateAsync(int id, UpdateProjectDto dto, CancellationToken cancellationToken = default)
     {
         if (id <= 0)
         {
             return false;
         }
 
-        var project = _projectRepository.GetById(id);
+        var project = await _projectRepository.GetByIdAsync(id, cancellationToken);
 
         if (project is null)
         {
@@ -91,30 +92,30 @@ public class ProjectService
         project.Type = dto.Type.Trim();
         project.Description = dto.Description.Trim();
 
-        _projectRepository.Update(project);
+        await _projectRepository.UpdateAsync(project, cancellationToken);
         return true;
     }
 
     /**
      * Finds a project and asks the repository to delete it.
      * @param {int} id - The project id, which must be greater than zero.
-     * @returns {bool} True when the project is deleted, or false if the id is invalid or the project does not exist.
+     * @returns {Task<bool>} True when the project is deleted, or false if the id is invalid or the project does not exist.
      */
-    public bool Delete(int id)
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
         if (id <= 0)
         {
             return false;
         }
 
-        var project = _projectRepository.GetById(id);
+        var project = await _projectRepository.GetByIdAsync(id, cancellationToken);
 
         if (project is null)
         {
             return false;
         }
 
-        _projectRepository.Delete(project);
+        await _projectRepository.DeleteAsync(project, cancellationToken);
         return true;
     }
 

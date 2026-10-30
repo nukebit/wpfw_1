@@ -25,10 +25,10 @@ builder.Services.AddDbContext<PortfolioDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // Create the repositories and services through dependency injection for each request.
-builder.Services.AddScoped<ProjectRepository>();
-builder.Services.AddScoped<BlogPostRepository>();
-builder.Services.AddScoped<ProjectService>();
-builder.Services.AddScoped<BlogPostService>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IBlogPostService, BlogPostService>();
 
 var app = builder.Build();
 

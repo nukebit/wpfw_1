@@ -4,7 +4,7 @@ using PortfolioApi.Models;
 
 namespace PortfolioApi.Repositories;
 
-public class BlogPostRepository
+public class BlogPostRepository : IBlogPostRepository
 {
     private readonly PortfolioDbContext _context;
 
@@ -20,53 +20,53 @@ public class BlogPostRepository
 
     /**
      * Reads all blog posts from SQL Server in id order. No parameters are required.
-     * @returns {BlogPost[]} The complete blog post list, or an empty array if the table is empty.
+     * @returns {Task<IReadOnlyList<BlogPost>>} The complete blog post list, or an empty list if the table is empty.
      */
-    public BlogPost[] GetAll()
+    public async Task<IReadOnlyList<BlogPost>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return _context.BlogPosts.AsNoTracking().OrderBy(blogPost => blogPost.Id).ToArray();
+        return await _context.BlogPosts.AsNoTracking().OrderBy(blogPost => blogPost.Id).ToListAsync(cancellationToken);
     }
 
     /**
      * Searches SQL Server for a blog post with the requested id.
      * @param {int} id - The id to search for.
-     * @returns {BlogPost?} The matching blog post, or null if no match exists.
+     * @returns {Task<BlogPost?>} The matching blog post, or null if no match exists.
      */
-    public BlogPost? GetById(int id)
+    public async Task<BlogPost?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return _context.BlogPosts.AsNoTracking().FirstOrDefault(blogPost => blogPost.Id == id);
+        return await _context.BlogPosts.AsNoTracking().FirstOrDefaultAsync(blogPost => blogPost.Id == id, cancellationToken);
     }
 
     /**
      * Inserts a new blog post into SQL Server and saves its generated id on the model.
      * @param {BlogPost} blogPost - The new blog post model, with an id of zero before it is saved.
-     * @returns {void} No return value, saves the blog post in the database.
+     * @returns {Task} No return value, saves the blog post in the database.
      */
-    public void Create(BlogPost blogPost)
+    public async Task CreateAsync(BlogPost blogPost, CancellationToken cancellationToken = default)
     {
         _context.BlogPosts.Add(blogPost);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     /**
      * Saves the changed fields of an existing blog post in SQL Server.
      * @param {BlogPost} blogPost - An existing blog post model with its id and updated fields.
-     * @returns {void} No return value, saves the changes in the database.
+     * @returns {Task} No return value, saves the changes in the database.
      */
-    public void Update(BlogPost blogPost)
+    public async Task UpdateAsync(BlogPost blogPost, CancellationToken cancellationToken = default)
     {
         _context.BlogPosts.Update(blogPost);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     /**
      * Removes an existing blog post from SQL Server.
      * @param {BlogPost} blogPost - The existing blog post model to delete.
-     * @returns {void} No return value, deletes the blog post from the database.
+     * @returns {Task} No return value, deletes the blog post from the database.
      */
-    public void Delete(BlogPost blogPost)
+    public async Task DeleteAsync(BlogPost blogPost, CancellationToken cancellationToken = default)
     {
         _context.BlogPosts.Remove(blogPost);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }
