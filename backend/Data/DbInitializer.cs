@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using PortfolioApi.Models;
 
 namespace PortfolioApi.Data;
@@ -5,15 +6,15 @@ namespace PortfolioApi.Data;
 public static class DbInitializer
 {
     /**
-     * Creates the database if needed and fills empty tables with example data.
+     * Applies pending migrations and fills empty tables with example data.
      * @param {PortfolioDbContext} context - Database context configured for the local SQL Server.
-     * @returns {void} No return value, saves the example data in the database.
+     * @returns {Task} No return value, saves the example data in the database.
      */
-    public static void Initialize(PortfolioDbContext context)
+    public static async Task InitializeAsync(PortfolioDbContext context, CancellationToken cancellationToken = default)
     {
-        context.Database.EnsureCreated();
+        await context.Database.MigrateAsync(cancellationToken);
 
-        if (!context.Projects.Any())
+        if (!await context.Projects.AnyAsync(cancellationToken))
         {
             // SQL Server generates the ids when these projects are saved.
             context.Projects.AddRange(
@@ -37,7 +38,7 @@ public static class DbInitializer
                 });
         }
 
-        if (!context.BlogPosts.Any())
+        if (!await context.BlogPosts.AnyAsync(cancellationToken))
         {
             context.BlogPosts.AddRange(
                 new BlogPost
@@ -63,6 +64,6 @@ public static class DbInitializer
                 });
         }
 
-        context.SaveChanges();
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -34,10 +34,10 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    // Create the database and add example data if the tables are empty.
-    using var scope = app.Services.CreateScope();
+    // Apply migrations and add example data if the tables are empty.
+    await using var scope = app.Services.CreateAsyncScope();
     var context = scope.ServiceProvider.GetRequiredService<PortfolioDbContext>();
-    DbInitializer.Initialize(context);
+    await DbInitializer.InitializeAsync(context);
 
     app.UseSwagger();
     app.UseSwaggerUI();
