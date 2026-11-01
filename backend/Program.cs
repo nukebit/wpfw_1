@@ -47,3 +47,6 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.MapControllers();
 app.Run();
+
+// Expose the entry point to the HTTP integration tests.
+public partial class Program { }
