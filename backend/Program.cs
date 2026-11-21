@@ -29,6 +29,14 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.User.RequireUniqueEmail = true)
     .AddEntityFrameworkStores<PortfolioDbContext>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = "Portfolio.Auth";
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest
+        : CookieSecurePolicy.Always;
+});
+
 // Create the repositories and services through dependency injection for each request.
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
@@ -50,6 +58,8 @@ if (app.Environment.IsDevelopment())
 
 // Match incoming requests to the routes defined in the controllers.
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();
 
