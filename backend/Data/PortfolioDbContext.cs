@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PortfolioApi.Models;
+using PortfolioApi.Security;
 
 namespace PortfolioApi.Data;
 
-public class PortfolioDbContext : DbContext
+public class PortfolioDbContext : IdentityDbContext<IdentityUser>
 {
     /**
      * Receives the database configuration through dependency injection.
@@ -17,4 +20,15 @@ public class PortfolioDbContext : DbContext
     // Each DbSet represents a table that EF Core can read and update.
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        // Keep seed identifiers stable so future migrations do not replace role memberships.
+        builder.Entity<IdentityRole>().HasData(
+            new { Id = "portfolio-guest", Name = PortfolioRoles.Guest, NormalizedName = "GAST" },
+            new { Id = "portfolio-editor", Name = PortfolioRoles.Editor, NormalizedName = "EDITOR" },
+            new { Id = "portfolio-admin", Name = PortfolioRoles.Admin, NormalizedName = "ADMIN" });
+    }
 }

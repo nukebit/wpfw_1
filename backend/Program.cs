@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PortfolioApi.Data;
 using PortfolioApi.Repositories;
@@ -23,6 +24,10 @@ var connectionString = builder.Configuration.GetConnectionString("PortfolioDatab
 
 builder.Services.AddDbContext<PortfolioDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+    options.User.RequireUniqueEmail = true)
+    .AddEntityFrameworkStores<PortfolioDbContext>();
 
 // Create the repositories and services through dependency injection for each request.
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();

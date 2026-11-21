@@ -1,12 +1,17 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using PortfolioApi.Data;
 using PortfolioApi.Models;
+using PortfolioApi.Security;
 
 namespace PortfolioApi.Tests;
 
 public sealed class MigrationTests
 {
+    private const string InitialMigration = "20261029090740_InitialCreate";
+
     [Fact]
     public async Task Migrations_CreateFreshDatabase_AndCanBeAppliedAgain()
     {
@@ -17,11 +22,14 @@ public sealed class MigrationTests
             await DbInitializer.InitializeAsync(context);
             await DbInitializer.InitializeAsync(context);
 
-            Assert.Single(await context.Database.GetAppliedMigrationsAsync());
+            Assert.Equal(context.Database.GetMigrations(), await context.Database.GetAppliedMigrationsAsync());
             Assert.Empty(await context.Database.GetPendingMigrationsAsync());
             Assert.False(context.Database.HasPendingModelChanges());
             Assert.Equal(3, await context.Projects.CountAsync());
             Assert.Equal(3, await context.BlogPosts.CountAsync());
+            Assert.Equal(
+                new[] { PortfolioRoles.Admin, PortfolioRoles.Editor, PortfolioRoles.Guest },
+                await context.Roles.OrderBy(role => role.Name).Select(role => role.Name).ToArrayAsync());
         }
         finally
         {
@@ -36,7 +44,7 @@ public sealed class MigrationTests
         await using var context = CreateContext(factory);
         try
         {
-            await context.Database.MigrateAsync();
+            await context.GetService<IMigrator>().MigrateAsync(InitialMigration);
             var project = new Project { Title = "Keep project", Type = "dashboard", Description = "Existing data" };
             var blogPost = new BlogPost { Title = "Keep blog", Category = "Testing", Content = "Existing content", PublishedOn = new DateOnly(2026, 10, 1) };
             context.AddRange(project, blogPost);
@@ -61,7 +69,7 @@ public sealed class MigrationTests
             Assert.Equal("Testing", savedBlogPost.Category);
             Assert.Equal("Existing content", savedBlogPost.Content);
             Assert.Equal(blogPost.PublishedOn, savedBlogPost.PublishedOn);
-            Assert.Single(await context.Database.GetAppliedMigrationsAsync());
+            Assert.Equal(context.Database.GetMigrations(), await context.Database.GetAppliedMigrationsAsync());
         }
         finally
         {
@@ -78,7 +86,7 @@ public sealed class MigrationTests
         await using var context = CreateContext(factory);
         try
         {
-            await context.Database.MigrateAsync();
+            await context.GetService<IMigrator>().MigrateAsync(InitialMigration);
             await context.Database.ExecuteSqlRawAsync("DROP TABLE [__EFMigrationsHistory]");
             await context.Database.ExecuteSqlRawAsync(changeSchema);
             var baseline = await ReadBaselineAsync();
