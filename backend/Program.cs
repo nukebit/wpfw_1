@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PortfolioApi.Data;
 using PortfolioApi.Repositories;
+using PortfolioApi.Security;
 using PortfolioApi.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+var assignRole = args.FirstOrDefault() == "--assign-role";
+var builder = WebApplication.CreateBuilder(assignRole ? [] : args);
 
 // Load this computer's database settings without putting its password in Git.
 if (builder.Environment.IsDevelopment())
@@ -44,6 +46,13 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IBlogPostService, BlogPostService>();
 
 var app = builder.Build();
+
+if (assignRole)
+{
+    Environment.ExitCode = await LocalRoleAssignment.RunAsync(app, args);
+    await app.DisposeAsync();
+    return;
+}
 
 if (app.Environment.IsDevelopment())
 {
