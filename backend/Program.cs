@@ -39,6 +39,10 @@ builder.Services.ConfigureApplicationCookie(options =>
         : CookieSecurePolicy.Always;
 });
 
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(PortfolioRoles.CanEditPortfolio, policy =>
+        policy.RequireRole(PortfolioRoles.Editor, PortfolioRoles.Admin));
+
 // Create the repositories and services through dependency injection for each request.
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();

@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PortfolioApi.Dtos.Projects;
+using PortfolioApi.Security;
 using PortfolioApi.Services;
 
 namespace PortfolioApi.Controllers;
@@ -60,6 +62,9 @@ public class ProjectsController : ControllerBase
      * @returns {Task<ActionResult<ProjectDto>>} HTTP 201 with the created project and its URL, or HTTP 400 for invalid input.
      */
     [HttpPost]
+    [Authorize(Policy = PortfolioRoles.CanEditPortfolio)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ProjectDto>> Create([FromBody] CreateProjectDto dto, CancellationToken cancellationToken)
@@ -75,6 +80,9 @@ public class ProjectsController : ControllerBase
      * @returns {Task<IActionResult>} HTTP 204 on success, HTTP 400 for invalid input, or HTTP 404 with error details for a missing project.
      */
     [HttpPut("{id:int}")]
+    [Authorize(Policy = PortfolioRoles.CanEditPortfolio)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -99,6 +107,9 @@ public class ProjectsController : ControllerBase
      * @returns {Task<IActionResult>} HTTP 204 on success, or HTTP 404 with error details for a missing project.
      */
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = PortfolioRoles.CanEditPortfolio)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
