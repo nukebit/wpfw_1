@@ -11,6 +11,29 @@ public sealed class CrudEndpointTests(PortfolioApiFactory factory) : IClassFixtu
     [Theory]
     [InlineData("projects")]
     [InlineData("blogposts")]
+    public async Task GetAllAndGetById_WithoutLogin_ReturnPublicItems(string resource)
+    {
+        // Arrange
+        using var client = factory.CreateApiClient();
+
+        // Act
+        using var list = await client.GetAsync($"/api/{resource}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, list.StatusCode);
+        var items = await list.Content.ReadFromJsonAsync<JsonArray>();
+        Assert.NotNull(items);
+        Assert.NotEmpty(items);
+        var first = items[0]!.AsObject();
+        var id = first["id"]!.GetValue<int>();
+        using var detail = await client.GetAsync($"/api/{resource}/{id}");
+        Assert.Equal(HttpStatusCode.OK, detail.StatusCode);
+        Assert.True(JsonNode.DeepEquals(first, await ReadObjectAsync(detail)));
+    }
+
+    [Theory]
+    [InlineData("projects")]
+    [InlineData("blogposts")]
     public async Task Post_ReturnsCreatedDtoAndLocation_AndPersistsItem(string resource)
     {
         // Arrange
