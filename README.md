@@ -25,26 +25,84 @@ Open `backend/appsettings.json`. The default connection is:
 Server=localhost;Database=WpfwPortfolioDb;Trusted_Connection=True;TrustServerCertificate=True;
 ```
 
-### 3. Run the backend
+Keep credentials in the ignored `backend/appsettings.Local.json` file or use the
+`ConnectionStrings__PortfolioDatabase` environment variable.
 
-Open a terminal in the main project folder. Run these commands in order:
+### 3. Run the backend and apply migrations
+
+Run these commands from the repository root.
 
 ```powershell
-cd backend
-dotnet restore
-dotnet run
+dotnet restore Portfolio.slnx
+dotnet run --project backend
 ```
 
-The backend creates the database and tables automatically when needed. Empty tables get example projects and blogposts. Saved data stays in SQL Server after a restart. Changes to existing table structures must be applied separately.
+In Development, startup applies the EF Core migrations and adds sample data to
+empty portfolio tables. The Identity migration adds the account and role tables
+while preserving existing projects and blog posts.
 
-### 4. Test the API
+To apply the migrations separately, install the EF Core CLI if needed and run
+the database update from the repository root.
 
-Open [Swagger](http://localhost:5074/swagger/index.html) in your browser:
+```powershell
+dotnet tool install --global dotnet-ef --version 10.0.9
+dotnet ef database update --project backend
+```
 
-1. Choose a route and click **Try it out**.
-2. Fill in any required values, such as a project ID. For POST or PUT, fill in the example JSON.
-3. Click **Execute** to see the result.
+If the portfolio tables predate EF migrations, run
+`backend/Data/BaselineExistingDatabase.sql` against that existing database before
+the update. It records the original migration after checking the existing schema.
 
-To stop the backend, press **Ctrl+C** in the terminal.
+### 4. Register, sign in, and assign roles
 
-The detailed explanation, diagram and API screenshots are in the WPFW document.
+Open [Swagger](http://localhost:5074/swagger/index.html). Use **Try it out** on
+`POST /api/auth/register` and enter your own development email and password.
+A successful registration returns `201` and assigns `Gast`. Use the same
+credentials on `POST /api/auth/login`. A successful login returns `204` and
+sets the `Portfolio.Auth` cookie. The browser sends it on subsequent requests
+to the same origin.
+
+Register a separate account for each role you need. With the API stopped,
+run the following commands for existing accounts in the local development database.
+
+```powershell
+dotnet run --project backend -- --assign-role editor@example.test Editor
+dotnet run --project backend -- --assign-role admin@example.test Admin
+```
+
+Replace the example emails with the accounts you registered. Restart the API and
+log in again after changing a role. Anyone can fetch projects and blog posts.
+Write requests require `Editor` or `Admin`. Missing authentication returns
+`401`. A signed-in guest gets `403`.
+
+### 5. Run the tests
+
+Start SQL Server and run from the repository root.
+
+```powershell
+dotnet test Portfolio.slnx
+```
+
+The xUnit project starts the real API and uses temporary SQL Server databases
+with unique names. The configured SQL Server login needs permission to create
+and drop those databases. Set `PORTFOLIO_TEST_CONNECTION` to use a separate SQL
+Server connection for the tests. The tests register and log in over HTTP, and
+the client keeps the authentication cookie when calling protected routes.
+
+| Route | Access | Expected results | HTTP test |
+| --- | --- | --- | --- |
+| `GET /api/projects` | Public | `200` | `GetAllAndGetById_WithoutLogin_ReturnPublicItems` |
+| `GET /api/projects/{id}` | Public | `200`, `404` | `GetAllAndGetById_WithoutLogin_ReturnPublicItems`, `UnknownId_ReturnsNotFoundProblemDetails` |
+| `POST /api/projects` | Editor or Admin | `201`, `400`, `401`, `403` | `Post_ReturnsCreatedDtoAndLocation_AndPersistsItem`, `MissingRequiredFields_ReturnsBadRequest_AndDoesNotChangeExistingItem` |
+| `PUT /api/projects/{id}` | Editor or Admin | `204`, `400`, `401`, `403`, `404` | `Put_ReturnsNoContent_AndPersistsChangedFields`, `MissingRequiredFields_ReturnsBadRequest_AndDoesNotChangeExistingItem`, `UnknownId_ReturnsNotFoundProblemDetails` |
+| `DELETE /api/projects/{id}` | Editor or Admin | `204`, `401`, `403`, `404` | `Delete_RemovesItem_AndSubsequentGetReturnsNotFound`, `UnknownId_ReturnsNotFoundProblemDetails` |
+| `GET /api/blogposts` | Public | `200` | `GetAllAndGetById_WithoutLogin_ReturnPublicItems` |
+| `GET /api/blogposts/{id}` | Public | `200`, `404` | `GetAllAndGetById_WithoutLogin_ReturnPublicItems`, `UnknownId_ReturnsNotFoundProblemDetails` |
+| `POST /api/blogposts` | Editor or Admin | `201`, `400`, `401`, `403` | `Post_ReturnsCreatedDtoAndLocation_AndPersistsItem`, `MissingRequiredFields_ReturnsBadRequest_AndDoesNotChangeExistingItem` |
+| `PUT /api/blogposts/{id}` | Editor or Admin | `204`, `400`, `401`, `403`, `404` | `Put_ReturnsNoContent_AndPersistsChangedFields`, `MissingRequiredFields_ReturnsBadRequest_AndDoesNotChangeExistingItem`, `UnknownId_ReturnsNotFoundProblemDetails` |
+| `DELETE /api/blogposts/{id}` | Editor or Admin | `204`, `401`, `403`, `404` | `Delete_RemovesItem_AndSubsequentGetReturnsNotFound`, `UnknownId_ReturnsNotFoundProblemDetails` |
+| `POST /api/auth/register` | Public | `201`, `400`, `409` | `Register_WithRequestedAdminRole_CreatesGuestOnly`, `Register_WithInvalidInput_ReturnsBadRequest`, `Register_WithExistingEmail_ReturnsConflict` |
+| `POST /api/auth/login` | Public | `204` with cookie, `400`, `401` | `Login_WithValidOrInvalidPassword_OnlyIssuesCookieForValidCredentials` |
+
+`Write_WithoutLoginOrAsGuest_ReturnsUnauthorizedOrForbidden` verifies `401`
+and `403` on all six write routes.
