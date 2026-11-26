@@ -10,7 +10,6 @@ using PortfolioApi.Security;
 namespace PortfolioApi.Controllers;
 
 [ApiController]
-[AllowAnonymous]
 [Route("api/auth")]
 public sealed class AuthController(
     UserManager<IdentityUser> users,
@@ -18,6 +17,7 @@ public sealed class AuthController(
     PortfolioDbContext context) : ControllerBase
 {
     [HttpPost("register")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
@@ -62,6 +62,7 @@ public sealed class AuthController(
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -73,6 +74,28 @@ public sealed class AuthController(
         return result.Succeeded
             ? NoContent()
             : Problem(statusCode: StatusCodes.Status401Unauthorized, title: "Invalid email or password.");
+    }
+
+    // The browser calls this after login and after every page reload.
+    [HttpGet("me")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Me()
+    {
+        var user = await users.GetUserAsync(User);
+        if (user is null) return Unauthorized();
+        return Ok(new { user.Id, user.Email, Roles = await users.GetRolesAsync(user) });
+    }
+
+    [HttpPost("logout")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Logout()
+    {
+        await signIn.SignOutAsync();
+        return NoContent();
     }
 
     private ObjectResult DuplicateAccount() => Problem(
