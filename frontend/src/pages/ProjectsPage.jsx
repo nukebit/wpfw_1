@@ -1,14 +1,16 @@
-import { getProjects } from "../api/projects.js";
+import * as projectsApi from "../api/projects.js";
 import ProjectCard from "../components/ProjectCard.jsx";
-import ResourceStatus from "../components/ResourceStatus.jsx";
-import useApiResource from "../hooks/useApiResource.js";
+import ProjectForm from "../components/ProjectForm.jsx";
+import ResourceManager from "../components/ResourceManager.jsx";
+
+const api = {
+  getAll: projectsApi.getProjects, create: projectsApi.createProject,
+  update: projectsApi.updateProject, remove: projectsApi.deleteProject,
+};
 
 export default function ProjectsPage() {
-  const { data: projects, status, error, reload } = useApiResource(getProjects, "projects");
-  return <>
-    <p className="eyebrow">SELECTED WORK</p><h1>Projects</h1>
-    <p className="lead">Applications, technical choices and things I have learned.</p>
-    <ResourceStatus status={status} error={error} onRetry={reload} label="projects" />
-    {status === "success" && <section className="cards" aria-label="Projects">{projects.map(project => <ProjectCard key={project.id} project={project} />)}</section>}
-  </>;
+  return <ResourceManager resourceKey="projects" title="Projects" eyebrow="SELECTED WORK"
+    description="Applications, technical choices and things I have learned."
+    label="project" api={api} Form={ProjectForm}
+    renderCard={(project, actions) => <ProjectCard key={project.id} project={project}>{actions}</ProjectCard>} />;
 }
