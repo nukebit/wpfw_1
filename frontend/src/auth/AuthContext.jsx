@@ -38,7 +38,8 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
-    await authApi.logout();
+    try { await authApi.logout(); }
+    catch (error) { if (error.status !== 401) throw error; }
     // Invalidate an earlier session request before removing the user.
     requestVersion.current += 1;
     setUser(null);

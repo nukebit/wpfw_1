@@ -39,7 +39,7 @@ export default function AccountPage({ mode }) {
     <form onSubmit={submit} aria-label={registering ? "Registration" : "Sign in"} aria-busy={busy}>
       {error && <p className="notice error" role="alert">{error}</p>}
       <div className="field"><label htmlFor="email">Email</label><input id="email" type="email" maxLength="256" autoComplete="username" required value={email} onChange={event => setEmail(event.target.value)} /></div>
-      <div className="field"><label htmlFor="password">Password</label><input id="password" type="password" autoComplete={registering ? "new-password" : "current-password"} minLength={registering ? 6 : undefined} required value={password} onChange={event => setPassword(event.target.value)} aria-describedby={registering ? "password-help" : undefined} />
+      <div className="field"><label htmlFor="password">Password</label><input id="password" type="password" maxLength="128" autoComplete={registering ? "new-password" : "current-password"} minLength={registering ? 6 : undefined} required value={password} onChange={event => setPassword(event.target.value)} aria-describedby={registering ? "password-help" : undefined} />
         {registering && <p id="password-help" className="hint">Use at least 6 characters, including an uppercase letter, lowercase letter, digit and symbol.</p>}
       </div>
       {registering && <div className="field"><label htmlFor="confirmation">Confirm password</label><input id="confirmation" type="password" autoComplete="new-password" required value={confirmation} onChange={event => setConfirmation(event.target.value)} /></div>}

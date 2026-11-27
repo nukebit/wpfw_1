@@ -1,4 +1,6 @@
 import { Link } from "react-router";
+import Weather from "../components/Weather.jsx";
+import ContactForm from "../components/ContactForm.jsx";
 
 export default function HomePage() {
   return <>
@@ -12,5 +14,6 @@ export default function HomePage() {
       <div><p className="eyebrow">ABOUT ME</p><h2>Learning through building.</h2></div>
       <div><p>I study HBO-ICT Software Engineering at The Hague University of Applied Sciences. This portfolio brings together my projects and development notes.</p><p>The application uses React for the interface and ASP.NET Core with SQL Server for the API and data.</p></div>
     </section>
+    <div className="home-extras"><Weather /><ContactForm /></div>
   </>;
 }

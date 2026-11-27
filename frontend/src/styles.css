@@ -40,6 +40,10 @@ input[aria-invalid="true"],textarea[aria-invalid="true"] { border-color: #ef9eab
 .field-error { color: #ffc2cf; margin-block: .35rem 0; font-size: .88rem; }
 .hint { color: var(--muted); font-size: .85rem; }
 .session { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+.session .actions { margin: 0; }
+.home-extras { margin-top: 3rem; border-top: 1px solid var(--line); padding-top: 3rem; }
+.home-extras > section { margin-bottom: 3rem; }
+.prose { margin-top: 2rem; }
 .footer { border-top: 1px solid var(--line); padding-block: 1.5rem; color: #d3d8df; font-size: .85rem; }
 .footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; } .footer span { color: var(--muted); }
 .skip { position: fixed; left: 1rem; top: -6rem; background: white; color: black; padding: .8rem; z-index: 5; } .skip:focus { top: 1rem; }
