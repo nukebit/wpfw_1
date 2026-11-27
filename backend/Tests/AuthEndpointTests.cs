@@ -10,6 +10,52 @@ namespace PortfolioApi.Tests;
 public sealed class AuthEndpointTests(PortfolioApiFactory factory) : IClassFixture<PortfolioApiFactory>
 {
     [Fact]
+    public async Task Me_WithoutLogin_ReturnsUnauthorized()
+    {
+        using var client = factory.CreateApiClient();
+        using var response = await client.GetAsync("/api/auth/me");
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData(PortfolioRoles.Editor)]
+    [InlineData(PortfolioRoles.Admin)]
+    public async Task Me_AfterLoginAndReload_ReturnsCurrentRoles_AndLogoutEndsSession(string? role)
+    {
+        using var client = await factory.CreateSignedInClientAsync(role);
+        // Calling the endpoint again models the session lookup after a page reload.
+        for (var attempt = 0; attempt < 2; attempt++)
+        {
+            using var response = await client.GetAsync("/api/auth/me");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var user = await response.Content.ReadFromJsonAsync<CurrentUserResponse>();
+            Assert.NotNull(user);
+            Assert.Contains(PortfolioRoles.Guest, user.Roles);
+            if (role is not null) Assert.Contains(role, user.Roles);
+            Assert.EndsWith("@example.test", user.Email);
+        }
+
+        using var logout = await client.PostAsync("/api/auth/logout", null);
+        Assert.Equal(HttpStatusCode.NoContent, logout.StatusCode);
+        using var afterLogout = await client.GetAsync("/api/auth/me");
+        Assert.Equal(HttpStatusCode.Unauthorized, afterLogout.StatusCode);
+        using var write = await client.PostAsJsonAsync("/api/projects",
+            new { Title = "Unauthorized", Type = "Web", Description = "Must not be saved" });
+        Assert.Equal(HttpStatusCode.Unauthorized, write.StatusCode);
+    }
+
+    [Fact]
+    public async Task Logout_WithoutLogin_ReturnsUnauthorized()
+    {
+        using var client = factory.CreateApiClient();
+        using var response = await client.PostAsync("/api/auth/logout", null);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    private sealed record CurrentUserResponse(string Id, string Email, string[] Roles);
+
+    [Fact]
     public async Task Register_WithRequestedAdminRole_CreatesGuestOnly()
     {
         // Arrange

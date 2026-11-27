@@ -4,6 +4,13 @@ export const projectFields = [
   { name: "description", label: "Description", maxLength: 2000, multiline: true },
 ];
 
+export const blogPostFields = [
+  { name: "title", label: "Title", maxLength: 100 },
+  { name: "category", label: "Category", maxLength: 50 },
+  { name: "content", label: "Content", maxLength: 10000, multiline: true },
+  { name: "publishedOn", label: "Publication date", type: "date" },
+];
+
 export function validateFields(fields, values) {
   const errors = {};
   for (const field of fields) {
